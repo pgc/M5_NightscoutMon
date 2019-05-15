@@ -998,7 +998,7 @@ unsigned long msCountLog;
 static uint8_t lcdBrightness = 10;
 static char *iniFilename = "/M5NS.INI";
 
-DynamicJsonDocument JSONdoc(16384);
+DynamicJsonDocument JSONdoc(65536);
 float last10sgv[10];
 int wasError = 0;
 time_t lastAlarmTime = 0;
@@ -1297,33 +1297,24 @@ void update_glycemia() {
     Serial.print("[HTTP] begin...\n");
     // configure target server and url
     char NSurl[128];
-    char DEVurl[128];
     strcpy(NSurl,"https://");
     strcat(NSurl,cfg.url);
     strcat(NSurl,"/api/v1/entries.json");
-    strcpy(DEVurl,"https://");
-    strcat(DEVurl,cfg.url);
-    strcat(DEVurl,"/api/v1/devicestatus.json");
-    // more info at /api/v2/properties
     http.begin(NSurl); //HTTP
-    //httpdev.begin(NSurl); //HTTP
     
     Serial.print("[HTTP] GET...\n");
     // start connection and send HTTP header
     int httpCode = http.GET();
-    //int httpdevCode = httpdev.GET();
   
     // httpCode will be negative on error
     if(httpCode > 0) {
       // HTTP header has been send and Server response header has been handled
       Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-      Serial.printf("[HTTPDev] GET... code: %d\n", httpCode);
-
+ 
       // file found at server
-      if(httpCode == HTTP_CODE_OK && httpdevCode == HTTP_CODE_OK) {
+      if(httpCode == HTTP_CODE_OK) {
         String json = http.getString();
-        String jsonDev = httpdev.getString();
-
+ 
         wasError = 0;
         // Serial.println(json);
         // const size_t capacity = JSON_ARRAY_SIZE(10) + 10*JSON_OBJECT_SIZE(19) + 3840;
@@ -1608,6 +1599,73 @@ void update_glycemia() {
       wasError = 1;
     }
   
+    char DEVurl[128];
+    strcpy(DEVurl,"https://");
+    strcat(DEVurl,cfg.url);
+    strcat(DEVurl,"/api/v1/devicestatus");
+    http.begin(DEVurl); //HTTP
+    
+    Serial.print("[HTTP] GET...\n");
+    // start connection and send HTTP header
+    httpCode = http.GET();
+  
+    // httpCode will be negative on error
+    if(httpCode > 0) {
+      // HTTP header has been send and Server response header has been handled
+      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+ 
+      // file found at server
+      if(httpCode == HTTP_CODE_OK) {
+        String json = http.getString();
+ 
+        wasError = 0;
+
+        Serial.print("Free Heap = "); Serial.println(ESP.getFreeHeap());
+        auto JSONerr = deserializeJson(JSONdoc, json);
+        if (JSONerr) {   //Check for errors in parsing
+          Serial.println("JSON parsing failed");
+          M5.Lcd.setFreeFont(FSSB12);
+          M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+          M5.Lcd.drawString("JSON parsing failed", 0, 220, GFXFF);
+          wasError = 1;
+        } else {
+          M5.Lcd.drawString("IOB:", 0, 24, GFXFF);
+          
+          uint64_t rawIOB = 0;
+          rawIOB = JSONdoc[0]["openaps"]["IOB"].as<long long>();
+          char IOBstr[10];
+          sprintf(IOBstr, "%+4.1f", rawIOB );
+          M5.Lcd.drawString(IOBstr, 130, 24, GFXFF);
+
+          M5.Lcd.drawString("COB:", 0, 48, GFXFF);
+          uint64_t rawCOB = 0;
+          rawCOB = JSONdoc[0]["openaps"]["COB"].as<long long>();
+          char COBstr[10];
+          sprintf(COBstr, "%+4.1f", rawCOB );
+          M5.Lcd.drawString(COBstr, 130, 48, GFXFF);
+
+        }
+
+      } else {
+        String errstr = String("[HTTP] GET not ok, error: " + String(httpCode));
+        Serial.println(errstr);
+        M5.Lcd.setCursor(0, 23);
+        M5.Lcd.setTextSize(1);
+        M5.Lcd.setFreeFont(FSSB12);
+        M5.Lcd.println(errstr);
+        wasError = 1;
+      }
+    } else {
+      String errstr = String("[HTTP] GET failed, error: " + String(http.errorToString(httpCode).c_str()));
+      Serial.println(errstr);
+      M5.Lcd.setCursor(0, 23);
+      M5.Lcd.setTextSize(1);
+      M5.Lcd.setFreeFont(FSSB12);
+      M5.Lcd.println(errstr);
+      wasError = 1;
+    }
+
+
     http.end();
   }
 }
