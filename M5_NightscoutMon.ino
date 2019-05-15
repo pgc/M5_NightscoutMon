@@ -1297,24 +1297,33 @@ void update_glycemia() {
     Serial.print("[HTTP] begin...\n");
     // configure target server and url
     char NSurl[128];
+    char DEVurl[128];
     strcpy(NSurl,"https://");
     strcat(NSurl,cfg.url);
     strcat(NSurl,"/api/v1/entries.json");
+    strcpy(DEVurl,"https://");
+    strcat(DEVurl,cfg.url);
+    strcat(DEVurl,"/api/v1/devicestatus.json");
     // more info at /api/v2/properties
     http.begin(NSurl); //HTTP
+    //httpdev.begin(NSurl); //HTTP
     
     Serial.print("[HTTP] GET...\n");
     // start connection and send HTTP header
     int httpCode = http.GET();
+    //int httpdevCode = httpdev.GET();
   
     // httpCode will be negative on error
     if(httpCode > 0) {
       // HTTP header has been send and Server response header has been handled
       Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+      Serial.printf("[HTTPDev] GET... code: %d\n", httpCode);
 
       // file found at server
-      if(httpCode == HTTP_CODE_OK) {
+      if(httpCode == HTTP_CODE_OK && httpdevCode == HTTP_CODE_OK) {
         String json = http.getString();
+        String jsonDev = httpdev.getString();
+
         wasError = 0;
         // Serial.println(json);
         // const size_t capacity = JSON_ARRAY_SIZE(10) + 10*JSON_OBJECT_SIZE(19) + 3840;
@@ -1370,13 +1379,12 @@ void update_glycemia() {
           M5.Lcd.setTextSize(1);
           M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
           if( !cfg.dev_mode ) {
-            //M5.Lcd.drawString("Nightscout", 0, 0, GFXFF);
+            M5.Lcd.drawString("Delta: ", 0, 0, GFXFF);
           } else {
             char heapstr[20];
             sprintf(heapstr, "%i free", ESP.getFreeHeap());
             M5.Lcd.drawString(heapstr, 0, 0, GFXFF);
           }
-          M5.Lcd.drawString("Delta: ", 0, 0, GFXFF);
 
           char diffstr[10];
           if( cfg.show_mgdl ) {
@@ -1384,17 +1392,9 @@ void update_glycemia() {
           } else {
               sprintf(diffstr, "%+4.1f", last10sgv[0]-last10sgv[1] );
           }
-          M5.Lcd.fillRect(130,24,69,23,TFT_BLACK);
+          M5.Lcd.fillRect(130,1,69,0,TFT_BLACK);
           M5.Lcd.drawString(diffstr, 130, 0, GFXFF);
           
-          M5.Lcd.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-          char dateStr[30];
-          sprintf(dateStr, "%d.%d.%04d", sensTm.tm_mday, sensTm.tm_mon+1, sensTm.tm_year+1900);
-          M5.Lcd.drawString(dateStr, 0, 48, GFXFF);
-          char timeStr[30];
-          sprintf(timeStr, "%02d:%02d:%02d", sensTm.tm_hour, sensTm.tm_min, sensTm.tm_sec);
-          M5.Lcd.drawString(timeStr, 0, 72, GFXFF);
-
           // calculate sensor time difference
           int sensorDifSec=0;
           struct tm timeinfo;
