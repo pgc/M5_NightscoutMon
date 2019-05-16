@@ -1383,9 +1383,8 @@ void update_glycemia() {
           } else {
               sprintf(diffstr, "%+4.1f", last10sgv[0]-last10sgv[1] );
           }
-          M5.Lcd.fillRect(130,1,150,24,TFT_BLACK);
-          M5.Lcd.drawString("    ", 130, 0, GFXFF);
-          M5.Lcd.drawString(diffstr, 130, 0, GFXFF);
+          M5.Lcd.fillRect(106,1,150,24,TFT_BLACK);
+          M5.Lcd.drawString(diffstr, 106, 0, GFXFF);
           
           // calculate sensor time difference
           int sensorDifSec=0;
