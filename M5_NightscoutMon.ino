@@ -1631,8 +1631,8 @@ void update_glycemia() {
           M5.Lcd.drawString("JSON parsing failed", 0, 220, GFXFF);
           wasError = 1;
         } else {
+          //IOB
           M5.Lcd.drawString("IOB:", 0, 24, GFXFF);
-          
           float rawIOB;
           rawIOB = JSONdoc[0]["openaps"]["suggested"]["IOB"];
           char IOBstr[10];
@@ -1641,6 +1641,7 @@ void update_glycemia() {
           Serial.println(IOBstr);
           M5.Lcd.drawString(IOBstr, 130, 24, GFXFF);
 
+          //COB
           M5.Lcd.drawString("COB:", 0, 48, GFXFF);
           float rawCOB;
           rawCOB = JSONdoc[0]["openaps"]["suggested"]["COB"];
@@ -1649,6 +1650,20 @@ void update_glycemia() {
           Serial.print("COB = ");
           Serial.println(COBstr);
           M5.Lcd.drawString(COBstr, 130, 48, GFXFF);
+
+          //EventualBG = EBG
+          M5.Lcd.drawString("Eventual BG:", 0, 72, GFXFF);
+          float rawEBG;
+          rawEBG = JSONdoc[0]["openaps"]["suggested"]["eventualBG"];
+          char EBGstr[10];
+          if( cfg.show_mgdl ) {
+            sprintf(EBGstr, "%+4f", rawEBG);
+          } else {
+            sprintf(EBGstr, "%+4.1f", rawEBG/18);
+          }
+          Serial.print("COB = ");
+          Serial.println(COBstr);
+          M5.Lcd.drawString(COBstr, 130, 72, GFXFF);
 
         }
 
