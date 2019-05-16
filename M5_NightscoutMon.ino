@@ -1665,7 +1665,7 @@ void update_glycemia() {
           }
           Serial.print("EBG = ");
           Serial.println(EBGstr);
-          M5.Lcd.drawString(COBstr, 106, 72, GFXFF);
+          M5.Lcd.drawString(EBGstr, 106, 72, GFXFF);
 
         }
 
