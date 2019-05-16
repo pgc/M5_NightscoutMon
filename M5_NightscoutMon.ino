@@ -1631,8 +1631,8 @@ void update_glycemia() {
         } else {
           M5.Lcd.drawString("IOB:", 0, 24, GFXFF);
           
-          uint64_t rawIOB = 0;
-          rawIOB = JSONdoc[0]["openaps"]["IOB"].as<long long>();
+          float rawIOB;
+          rawIOB = JSONdoc[0]["openaps"]["IOB"].as<float float>();
           char IOBstr[10];
           sprintf(IOBstr, "%+4.1f", rawIOB );
           M5.Lcd.drawString(IOBstr, 130, 24, GFXFF);
