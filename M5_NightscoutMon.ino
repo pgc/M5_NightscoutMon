@@ -1635,6 +1635,8 @@ void update_glycemia() {
           rawIOB = JSONdoc[0]["openaps"]["IOB"].as<float>();
           char IOBstr[10];
           sprintf(IOBstr, "%+4.1f", rawIOB );
+          Serial.print("IOB = ");
+          Serial.println(IOBstr);
           M5.Lcd.drawString(IOBstr, 130, 24, GFXFF);
 
           M5.Lcd.drawString("COB:", 0, 48, GFXFF);
