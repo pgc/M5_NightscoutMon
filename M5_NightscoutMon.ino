@@ -1637,10 +1637,10 @@ void update_glycemia() {
           float rawIOB;
           rawIOB = JSONdoc[0]["openaps"]["suggested"]["IOB"];
           char IOBstr[10];
-          sprintf(IOBstr, "%+4.1f", rawIOB );
+          sprintf(IOBstr, "%+4.2f", rawIOB );
           Serial.print("IOB = ");
           Serial.println(IOBstr);
-          M5.Lcd.drawString(IOBstr, 130, 24, GFXFF);
+          M5.Lcd.drawString(IOBstr, 106, 24, GFXFF);
 
           //COB
           M5.Lcd.drawString("COB:", 0, 48, GFXFF);
@@ -1650,21 +1650,22 @@ void update_glycemia() {
           sprintf(COBstr, "%+4.1f", rawCOB );
           Serial.print("COB = ");
           Serial.println(COBstr);
-          M5.Lcd.drawString(COBstr, 130, 48, GFXFF);
+          M5.Lcd.drawString(COBstr, 106, 48, GFXFF);
 
           //EventualBG = EBG
-          M5.Lcd.drawString("Eventual BG:", 0, 72, GFXFF);
+          M5.Lcd.drawString("EBG:", 0, 72, GFXFF);
           float rawEBG;
           rawEBG = JSONdoc[0]["openaps"]["suggested"]["eventualBG"];
+          rawEBG /= 18.0;
           char EBGstr[10];
           if( cfg.show_mgdl ) {
-            sprintf(EBGstr, "%+4f", rawEBG);
+            sprintf(EBGstr, "%+4f", rawEBG*18);
           } else {
-            sprintf(EBGstr, "%+4.1f", rawEBG/18);
+            sprintf(EBGstr, "%+4.1f", rawEBG);
           }
-          Serial.print("COB = ");
-          Serial.println(COBstr);
-          M5.Lcd.drawString(COBstr, 130, 72, GFXFF);
+          Serial.print("EBG = ");
+          Serial.println(EBGstr);
+          M5.Lcd.drawString(COBstr, 106, 72, GFXFF);
 
         }
 
