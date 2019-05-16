@@ -1603,6 +1603,8 @@ void update_glycemia() {
     strcpy(DEVurl,"https://");
     strcat(DEVurl,cfg.url);
     strcat(DEVurl,"/api/v1/devicestatus");
+    Serial.print("URL = ");
+    Serial.println(DEVurl);
     http.begin(DEVurl); //HTTP
     
     Serial.print("[HTTP] GET...\n");
@@ -1640,10 +1642,12 @@ void update_glycemia() {
           M5.Lcd.drawString(IOBstr, 130, 24, GFXFF);
 
           M5.Lcd.drawString("COB:", 0, 48, GFXFF);
-          uint64_t rawCOB = 0;
-          rawCOB = JSONdoc[0]["openaps"]["COB"].as<long long>();
+          float rawCOB;
+          rawCOB = JSONdoc[0]["openaps"]["suggested"]["COB"];
           char COBstr[10];
           sprintf(COBstr, "%+4.1f", rawCOB );
+          Serial.print("COB = ");
+          Serial.println(COBstr);
           M5.Lcd.drawString(COBstr, 130, 48, GFXFF);
 
         }
