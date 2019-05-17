@@ -1399,6 +1399,13 @@ void update_glycemia() {
             Serial.print("Local: "); Serial.print(timeinfo.tm_hour); Serial.print(":"); Serial.print(timeinfo.tm_min); Serial.print(":"); Serial.print(timeinfo.tm_sec); Serial.print(" DST "); Serial.println(timeinfo.tm_isdst);
             sensorDifSec=difftime(mktime(&timeinfo), sensTime);
           }
+
+          if (timeinfo.tm_hour > 22) {
+            M5.Lcd.setBrightness(50);
+          } else {
+            M5.Lcd.setBrightness(100);
+          }
+
           Serial.print("Sensor time difference = "); Serial.print(sensorDifSec); Serial.println(" sec");
           unsigned int sensorDifMin = (sensorDifSec+30)/60;
           uint16_t tdColor = TFT_LIGHTGREY;
@@ -1620,6 +1627,8 @@ void update_glycemia() {
           M5.Lcd.drawString("JSON parsing failed", 0, 220, GFXFF);
           wasError = 1;
         } else {
+          M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
+
           //IOB
           M5.Lcd.drawString("IOB:", 0, 24, GFXFF);
           float rawIOB;
@@ -1628,7 +1637,7 @@ void update_glycemia() {
           sprintf(IOBstr, "%+4.2f", rawIOB );
           Serial.print("IOB = ");
           Serial.println(IOBstr);
-          M5.Lcd.fillRect(106,24,130,47,TFT_BLACK);
+          //M5.Lcd.fillRect(106,24,130,47,TFT_BLACK);
           M5.Lcd.drawString(IOBstr, 106, 24, GFXFF);
 
           //COB
@@ -1639,7 +1648,7 @@ void update_glycemia() {
           sprintf(COBstr, "%+4.1f", rawCOB );
           Serial.print("COB = ");
           Serial.println(COBstr);
-          M5.Lcd.fillRect(106,48,130,71,TFT_BLACK);
+          //M5.Lcd.fillRect(106,48,130,71,TFT_BLACK);
           M5.Lcd.drawString(COBstr, 106, 48, GFXFF);
 
           //EventualBG = EBG
@@ -1655,21 +1664,20 @@ void update_glycemia() {
           }
           Serial.print("EBG = ");
           Serial.println(EBGstr);
-          M5.Lcd.fillRect(106,72,130,95,TFT_BLACK);
+          //M5.Lcd.fillRect(106,72,130,95,TFT_BLACK);
           M5.Lcd.drawString(EBGstr, 106, 72, GFXFF);
 
           if (drawpump) {
             // Get Pumpinfo
             char devStr[64];
-            M5.Lcd.fillRect(0, 220, 320, 20, TFT_BLACK);
-            M5.Lcd.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+//            M5.Lcd.fillRect(0, 220, 320, 20, TFT_BLACK);
+//            M5.Lcd.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
 
             float rawRES;
             rawRES = JSONdoc[0]["pump"]["reservoir"];
             char RESstr[16];
             sprintf(RESstr, "Pump: %+4.2f", rawRES );
-            M5.Lcd.drawString(RESstr, 0, 220, GFXFF);
-          }
+            M5.Lcd.drawString(RESstr, 0, 220, GFXFF);          }
 
         }
 
