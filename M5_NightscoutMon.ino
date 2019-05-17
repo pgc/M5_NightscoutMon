@@ -1400,6 +1400,7 @@ void update_glycemia() {
             sensorDifSec=difftime(mktime(&timeinfo), sensTime);
           }
 
+          //Set Brightness to 50% after 10pm
           if (timeinfo.tm_hour > 22) {
             M5.Lcd.setBrightness(50);
           } else {
