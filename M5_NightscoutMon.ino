@@ -1383,7 +1383,7 @@ void update_glycemia() {
           } else {
               sprintf(diffstr, "%+4.1f", last10sgv[0]-last10sgv[1] );
           }
-          M5.Lcd.fillRect(106,1,150,24,TFT_BLACK);
+          M5.Lcd.fillRect(106,1,140,24,TFT_BLACK);
           M5.Lcd.drawString(diffstr, 106, 0, GFXFF);
           
           // calculate sensor time difference
@@ -1539,6 +1539,7 @@ void update_glycemia() {
                 lastAlarmTime = mktime(&timeinfo);
             }
           } else {
+            int drawpump = 0;
             if((sensSgv<=cfg.snd_warning) && (sensSgv>=0.1)) {
               // red alarm state
               // M5.Lcd.fillRect(110, 220, 100, 20, TFT_YELLOW);
@@ -1552,21 +1553,7 @@ void update_glycemia() {
               }
             } else {
               // normal glycemia state
-              M5.Lcd.fillRect(0, 220, 320, 20, TFT_BLACK);
-              M5.Lcd.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-              char devStr[64];
-              strcpy(devStr, sensDev);
-              if(strcmp(devStr,"MIAOMIAO")==0) {
-                JsonObject obj=JSONdoc[0].as<JsonObject>();
-                if(obj.containsKey("xDrip_raw")) {
-                  strcpy(devStr,"xDrip MiaoMiao + Libre");
-                } else {
-                  strcpy(devStr,"Spike MiaoMiao + Libre");
-                }
-              }
-              if(strcmp(devStr,"Tomato")==0)
-                strcat(devStr," MiaoMiao + Libre");
-              M5.Lcd.drawString(devStr, 0, 220, GFXFF);
+              drawpump = 1;
             }
           }
           
@@ -1639,6 +1626,7 @@ void update_glycemia() {
           sprintf(IOBstr, "%+4.2f", rawIOB );
           Serial.print("IOB = ");
           Serial.println(IOBstr);
+          M5.Lcd.fillRect(106,24,140,47,TFT_BLACK);
           M5.Lcd.drawString(IOBstr, 106, 24, GFXFF);
 
           //COB
@@ -1649,6 +1637,7 @@ void update_glycemia() {
           sprintf(COBstr, "%+4.1f", rawCOB );
           Serial.print("COB = ");
           Serial.println(COBstr);
+          M5.Lcd.fillRect(106,48,140,71,TFT_BLACK);
           M5.Lcd.drawString(COBstr, 106, 48, GFXFF);
 
           //EventualBG = EBG
@@ -1664,7 +1653,18 @@ void update_glycemia() {
           }
           Serial.print("EBG = ");
           Serial.println(EBGstr);
+          M5.Lcd.fillRect(106,72,140,95,TFT_BLACK);
           M5.Lcd.drawString(EBGstr, 106, 72, GFXFF);
+
+          if (drawpump) {
+            // Get Pumpinfo
+            char devStr[64];
+            M5.Lcd.fillRect(0, 220, 320, 20, TFT_BLACK);
+            M5.Lcd.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+
+            devStr = "Pump:"
+            M5.Lcd.drawString(devStr, 0, 220, GFXFF);
+          }
 
         }
 
