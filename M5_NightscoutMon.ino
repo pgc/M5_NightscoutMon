@@ -1302,6 +1302,9 @@ void update_glycemia() {
     strcat(NSurl,"/api/v1/entries.json");
     http.begin(NSurl); //HTTP
     
+    // used later to if we can add pump info
+    int drawpump = 0;
+
     Serial.print("[HTTP] GET...\n");
     // start connection and send HTTP header
     int httpCode = http.GET();
@@ -1539,7 +1542,6 @@ void update_glycemia() {
                 lastAlarmTime = mktime(&timeinfo);
             }
           } else {
-            int drawpump = 0;
             if((sensSgv<=cfg.snd_warning) && (sensSgv>=0.1)) {
               // red alarm state
               // M5.Lcd.fillRect(110, 220, 100, 20, TFT_YELLOW);
