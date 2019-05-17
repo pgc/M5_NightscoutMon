@@ -1386,7 +1386,7 @@ void update_glycemia() {
           } else {
               sprintf(diffstr, "%+4.1f", last10sgv[0]-last10sgv[1] );
           }
-          M5.Lcd.fillRect(106,1,140,24,TFT_BLACK);
+          M5.Lcd.fillRect(106,1,130,24,TFT_BLACK);
           M5.Lcd.drawString(diffstr, 106, 0, GFXFF);
           
           // calculate sensor time difference
@@ -1639,7 +1639,7 @@ void update_glycemia() {
           sprintf(COBstr, "%+4.1f", rawCOB );
           Serial.print("COB = ");
           Serial.println(COBstr);
-          //M5.Lcd.fillRect(106,48,140,71,TFT_BLACK);
+          M5.Lcd.fillRect(106,48,130,71,TFT_BLACK);
           M5.Lcd.drawString(COBstr, 106, 48, GFXFF);
 
           //EventualBG = EBG
@@ -1655,7 +1655,7 @@ void update_glycemia() {
           }
           Serial.print("EBG = ");
           Serial.println(EBGstr);
-          //M5.Lcd.fillRect(106,72,140,95,TFT_BLACK);
+          M5.Lcd.fillRect(106,72,130,95,TFT_BLACK);
           M5.Lcd.drawString(EBGstr, 106, 72, GFXFF);
 
           if (drawpump) {
@@ -1664,8 +1664,11 @@ void update_glycemia() {
             M5.Lcd.fillRect(0, 220, 320, 20, TFT_BLACK);
             M5.Lcd.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
 
-            //devStr = "Pump:"
-            M5.Lcd.drawString("Pump:", 0, 220, GFXFF);
+            float rawRES;
+            rawRES = JSONdoc[0]["pump"]["reservoir"];
+            char RESstr[16];
+            sprintf(RESstr, "Pump: %+4.2f", rawRES );
+            M5.Lcd.drawString(RESstr, 0, 220, GFXFF);
           }
 
         }
