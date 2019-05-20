@@ -998,7 +998,7 @@ unsigned long msCountLog;
 static uint8_t lcdBrightness = 10;
 static char *iniFilename = "/M5NS.INI";
 
-DynamicJsonDocument JSONdoc(65536);
+DynamicJsonDocument JSONdoc(16384);
 float last10sgv[10];
 int wasError = 0;
 time_t lastAlarmTime = 0;
@@ -1599,7 +1599,7 @@ void update_glycemia() {
     char DEVurl[128];
     strcpy(DEVurl,"https://");
     strcat(DEVurl,cfg.url);
-    strcat(DEVurl,"/api/v1/devicestatus");
+    strcat(DEVurl,"/api/v1/devicestatus.json?count=1");
     Serial.print("URL = ");
     Serial.println(DEVurl);
     http.begin(DEVurl); //HTTP
@@ -1677,7 +1677,7 @@ void update_glycemia() {
             float rawRES;
             rawRES = JSONdoc[0]["pump"]["reservoir"];
             char RESstr[16];
-            sprintf(RESstr, "Pump: %+4.2f", rawRES );
+            sprintf(RESstr, "Pump: %4.2f", rawRES );
             M5.Lcd.drawString(RESstr, 0, 220, GFXFF);          }
 
         }
